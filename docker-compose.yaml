@@ -1,0 +1,26 @@
+services:
+  api:
+    build: .
+    image: student-api
+    container_name: api_service
+
+    volumes:
+      - ./student_age.json:/data/student_age.json
+    networks:
+      - student_net
+
+  website:
+    image: php:apache
+    container_name: website_service
+    ports:
+      - "8080:80"
+    volumes:
+      - ./website:/var/www/html
+    depends_on:
+      - api
+    networks:
+      - student_net
+
+networks:
+  student_net:
+    driver: bridge
