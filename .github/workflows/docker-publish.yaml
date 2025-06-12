@@ -35,10 +35,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
+      - name: build and push Docker compose
+        uses: docker/compose-action@v2
         with:
-          context: .
+          files: docker-compose.yml
           push: true
+          buildx: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
