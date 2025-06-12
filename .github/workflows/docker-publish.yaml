@@ -36,9 +36,9 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: build and push Docker compose
-        uses: docker/compose-action@v2
+        uses: hoverkraft-tech/compose-action@v2
         with:
-          files: docker-compose.yml
+          files: docker-compose.yaml
           push: true
           buildx: true
           tags: ${{ steps.meta.outputs.tags }}
