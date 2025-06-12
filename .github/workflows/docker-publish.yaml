@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Publish Docker images
 
 on:
   push:
@@ -8,12 +8,11 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_OWNER: ${{ github.repository_owner }}
 
 jobs:
-  publish:
+  publish-api:
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       packages: write
@@ -29,17 +28,49 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata for Docker
-        id: meta
+      - name: Extract metadata for API image
+        id: meta-api
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/student-api
 
-      - name: build and push Docker compose
-        uses: hoverkraft-tech/compose-action@v2
+      - name: Build and push API Docker image
+        uses: docker/build-push-action@v6
         with:
-          files: docker-compose.yaml
+          context: .
+          file: ./Dockerfile
           push: true
-          buildx: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-api.outputs.tags }}
+          labels: ${{ steps.meta-api.outputs.labels }}
+
+  publish-website:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Website image
+        id: meta-web
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_OWNER }}/student-website
+
+      - name: Build and push Website Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./website
+          file: ./website/Dockerfile
+          push: true
+          tags: ${{ steps.meta-web.outputs.tags }}
+          labels: ${{ steps.meta-web.outputs.labels }}

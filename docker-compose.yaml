@@ -10,7 +10,9 @@ services:
       - student_net
 
   website:
-    image: php:apache
+    build:
+      context: ./website
+    image: student-website 
     container_name: website_service
     ports:
       - "8080:80"
