@@ -5,7 +5,7 @@ LABEL maintainer="Louis <louismorvan3@gmail.com>"
 WORKDIR /
 
 COPY student_age.py .
-COPY requirement.txt .
+COPY requirements.txt .
 
 RUN apt-get update && apt-get install -y\
     python3-dev \
@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y\
     libldap2-dev \
     libssl-dev
 
-RUN pip3 install -r requirement.txt
+RUN pip3 install -r requirements.txt
 
 VOLUME /data
 EXPOSE 5000
